@@ -1,4 +1,6 @@
-﻿using BigFridge.Patches;
+﻿using BigFridge.Compatibility.BetterCrafting;
+using BigFridge.Compatibility.GenericModConfigMenu;
+using BigFridge.Patches;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -21,7 +23,7 @@ namespace BigFridge
             LogMonitor = Monitor;
 
             // Agregar el item
-            helper.Events.Content.AssetRequested += OnAssetRequested!;
+            helper.Events.Content.AssetRequested += OnAssetRequested;
 
             // Patches
             var harmony = new Harmony(this.ModManifest.UniqueID);
@@ -50,10 +52,10 @@ namespace BigFridge
             );
 
             // Config Menu
-            helper.Events.GameLoop.GameLaunched += OnGameLaunched!;
+            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         }
 
-        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
         {
             // Lo agrega como item
             if (e.Name.IsEquivalentTo("Data/BigCraftables"))
@@ -113,46 +115,52 @@ namespace BigFridge
             }
         }
 
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
-            var api = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
-            if (api == null)
+            IGenericModConfigMenuAPI? apiGMCM = Helper.ModRegistry.GetApi<IGenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+            if (apiGMCM != null)
             {
-                return;
+                apiGMCM.Register(ModManifest, () => Config = new(), () => Helper.WriteConfig(Config), false);
+                apiGMCM.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => Config.HouseFridgeProgressive,
+                    setValue: (bool newValue) => Config.HouseFridgeProgressive = newValue,
+                    name: () => Helper.Translation.Get("Config_HouseFridgeProgressive_Name"),
+                    tooltip: () => Helper.Translation.Get("Config_HouseFridgeProgressive_Tooltip"),
+                    fieldId: "AlanBF.BigFridge.HouseFridgeProgressive");
+                apiGMCM.AddBoolOption(
+                    mod: ModManifest,
+                    getValue: () => Config.ItemFridgeWithHearths,
+                    setValue: (bool newValue) => Config.ItemFridgeWithHearths = newValue,
+                    name: () => Helper.Translation.Get("Config_ItemFridgeWithHearths_Name"),
+                    tooltip: () => Helper.Translation.Get("Config_ItemFridgeWithHearths_Tooltip"),
+                    fieldId: "AlanBF.BigFridge.ItemFridgeWithHearths");
+                apiGMCM.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => Config.HearthsWithRobin,
+                    setValue: (int newValue) => Config.HearthsWithRobin = newValue,
+                    name: () => Helper.Translation.Get("Config_HearthsWithRobin_Name"),
+                    tooltip: () => Helper.Translation.Get("Config_HearthsWithRobin_Tooltip"),
+                    min: 0,
+                    max: 10,
+                    interval: 1,
+                    formatValue: (int value) => value.ToString(),
+                    fieldId: "AlanBF.BigFridge.HearthsWithRobin");
+                apiGMCM.AddNumberOption(
+                    mod: ModManifest,
+                    getValue: () => Config.Price,
+                    setValue: (int newValue) => Config.Price = newValue,
+                    name: () => Helper.Translation.Get("Config_Price_Name"),
+                    tooltip: () => Helper.Translation.Get("Config_Price_Tooltip")
+                    );
             }
-            api.Register(ModManifest, () => Config = new(), () => Helper.WriteConfig(Config), false);
-            api.AddBoolOption(
-                mod: ModManifest,
-                getValue: () => Config.HouseFridgeProgressive,
-                setValue: (bool newValue) => Config.HouseFridgeProgressive = newValue,
-                name: () => Helper.Translation.Get("Config_HouseFridgeProgressive_Name"),
-                tooltip: () => Helper.Translation.Get("Config_HouseFridgeProgressive_Tooltip"),
-                fieldId: "AlanBF.BigFridge.HouseFridgeProgressive");
-            api.AddBoolOption(
-                mod: ModManifest,
-                getValue: () => Config.ItemFridgeWithHearths,
-                setValue: (bool newValue) => Config.ItemFridgeWithHearths = newValue,
-                name: () => Helper.Translation.Get("Config_ItemFridgeWithHearths_Name"),
-                tooltip: () => Helper.Translation.Get("Config_ItemFridgeWithHearths_Tooltip"),
-                fieldId: "AlanBF.BigFridge.ItemFridgeWithHearths");
-            api.AddNumberOption(
-                mod: ModManifest,
-                getValue: () => Config.HearthsWithRobin,
-                setValue: (int newValue) => Config.HearthsWithRobin = newValue,
-                name: () => Helper.Translation.Get("Config_HearthsWithRobin_Name"),
-                tooltip: () => Helper.Translation.Get("Config_HearthsWithRobin_Tooltip"),
-                min: 0,
-                max: 10,
-                interval: 1,
-                formatValue: (int value) => value.ToString(),
-                fieldId: "AlanBF.BigFridge.HearthsWithRobin");
-            api.AddNumberOption(
-                mod: ModManifest,
-                getValue: () => Config.Price,
-                setValue: (int newValue) => Config.Price = newValue,
-                name: () => Helper.Translation.Get("Config_Price_Name"),
-                tooltip: () => Helper.Translation.Get("Config_Price_Tooltip")
-                );
+
+            IBetterCraftingAPI? apiBetterCrafting = Helper.ModRegistry.GetApi<IBetterCraftingAPI>("leclair.bettercrafting");
+            if (apiBetterCrafting != null)
+            {
+                apiBetterCrafting.UnregisterInventoryProvider(typeof(Chest));
+                apiBetterCrafting.RegisterInventoryProvider(typeof(Chest), new ChestProvider());
+            }
         }
     }
 }
