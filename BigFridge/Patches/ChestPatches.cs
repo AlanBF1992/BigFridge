@@ -160,17 +160,22 @@ namespace BigFridge.Patches
 
             int currentLidFrame = (int)__instance.GetInstanceField("currentLidFrame")!;
 
+            if (__instance.QualifiedItemId == "(BC)216")
+            {
+                currentLidFrame -= 216;
+            }
+
             ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(__instance.QualifiedItemId);
             Texture2D texture = dataOrErrorItem.GetTexture();
 
-            int baseFridge = __instance.ParentSheetIndex;
-            int fridgeDoor = currentLidFrame;
-
-            Rectangle sourceBaseFridge = dataOrErrorItem.GetSourceRect(0, baseFridge);
-            Rectangle sourceOpenDoor = dataOrErrorItem.GetSourceRect(0, fridgeDoor);
-
             if (__instance.playerChoiceColor.Value.Equals(Color.Black))
             {
+                int baseFridge = __instance.ParentSheetIndex;
+                int fridgeDoor = currentLidFrame;
+
+                Rectangle sourceBaseFridge = dataOrErrorItem.GetSourceRect(0, baseFridge);
+                Rectangle sourceOpenDoor = dataOrErrorItem.GetSourceRect(0, fridgeDoor);
+
                 //Base, Animación Puerta
                 spriteBatch.Draw(texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(num * 64f + ((__instance.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), (num2 - 1f) * 64f)), sourceBaseFridge, __instance.Tint * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, num3);
                 spriteBatch.Draw(texture, Game1.GlobalToLocal(Game1.viewport, new Vector2(num * 64f, (num2 - 1f) * 64f + ((__instance.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0))), sourceOpenDoor, __instance.Tint * alpha * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, num3 + 1E-05f);
@@ -219,6 +224,33 @@ namespace BigFridge.Patches
             spriteBatch.Draw(texture, local ? new Vector2(x, y - 64) : Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, (y - 1) * 64 + ((__instance.shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0))), sourceRect2, Color.White * alpha, 0f, Vector2.Zero, 4f, SpriteEffects.None, local ? 0.89f : ((float)(y * 64 + 4) / 10000f));
 
             return false;
+        }
+
+        internal static void performObjectDropInActionPostfix(Chest __instance, Item dropInItem, bool probe, Farmer who, ref bool __result)
+        {
+            GameLocation location = __instance.Location;
+            if (dropInItem == null || dropInItem.QualifiedItemId != "(BC)AlanBF.BigFridge" || __instance.QualifiedItemId != "(BC)216" || location == null || probe) return;
+            if (__instance.GetMutex().IsLocked())
+            {
+                __result = false;
+                return;
+            }
+
+            Chest fridge = new(who.CurrentItem.ItemId, __instance.TileLocation, 1, 2)
+            {
+                shakeTimer = 50,
+                SpecialChestType = (Chest.SpecialChestTypes)9
+            };
+
+            fridge.fridge.Value = true;
+            location.Objects.Remove(__instance.TileLocation);
+            fridge.netItems.Value = __instance.netItems.Value;
+            fridge.playerChoiceColor.Value = __instance.playerChoiceColor.Value;
+            location.Objects.Add(__instance.TileLocation, fridge);
+            Game1.createMultipleItemDebris(ItemRegistry.Create(__instance.QualifiedItemId), __instance.TileLocation * 64f + new Vector2(32f), -1);
+            location.playSound("axchop");
+
+            __result = true;
         }
     }
 }

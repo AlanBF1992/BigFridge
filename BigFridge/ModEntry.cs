@@ -53,6 +53,7 @@ namespace BigFridge
                 prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.getActualCapacityPrefix))
             );
 
+            // Color picker
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.ShowMenu)),
                 prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.ShowMenuPrefix))
@@ -60,19 +61,19 @@ namespace BigFridge
 
             // Reemplaza un Mini-Fridge por un Big Fridge
             harmony.Patch(
-                original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.checkAction)),
-                prefix: new HarmonyMethod(typeof(GameLocationPatches), nameof(GameLocationPatches.checkActionPrefix))
+                original: AccessTools.Method(typeof(Chest), nameof(Chest.performObjectDropInAction)),
+                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.performObjectDropInActionPostfix))
             );
 
             /*********
              * Colors
              *********/
-            // Draw
+            // Fridge en el mundo
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
                 prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawPrefix))
             );
-            // Draw local
+            // Fridge en el color picker
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float), typeof(bool) }),
                 prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawLocalPrefix))
