@@ -66,11 +66,13 @@ namespace BigFridge.Patches
                     {
                         if (__instance.Location is IslandFarmHouse home && home.fridgePosition != Point.Zero && __instance.TileLocation.ToPoint() == Point.Zero)
                         {
+                            __instance.lidFrameCount.Value = 2;
                             __instance.SpecialChestType = Chest.SpecialChestTypes.None;
                         }
                     }
                     else if (home2.fridgePosition != Point.Zero && __instance.TileLocation.ToPoint() == Point.Zero)
                     {
+                        __instance.lidFrameCount.Value = 2;
                         __instance.SpecialChestType = Chest.SpecialChestTypes.None;
 
                     }
