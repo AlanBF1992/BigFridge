@@ -50,13 +50,13 @@ namespace BigFridge
             // Capacidad de refrigeradores originales y los nuevos
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.GetActualCapacity)),
-                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.getActualCapacityPrefix))
+                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.getActualCapacityPostfix))
             );
 
             // Color picker
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.ShowMenu)),
-                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.ShowMenuPrefix))
+                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.ShowMenuPostfix))
             );
 
             // Reemplaza un Mini-Fridge por un Big Fridge
@@ -76,7 +76,7 @@ namespace BigFridge
             // Fridge en el color picker
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float), typeof(bool) }),
-                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawLocalPrefix))
+                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawLocalPostfix))
             );
             // ItemGrabMenu
             harmony.Patch(

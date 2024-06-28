@@ -15,7 +15,7 @@ namespace BigFridge.Patches
             Monitor = monitor;
         }
 
-        internal static bool placementActionPrefix(StardewValley.Object __instance, ref bool __result, GameLocation location, int x, int y, Farmer? who = null)
+        internal static void placementActionPrefix(StardewValley.Object __instance, ref bool __result, GameLocation location, int x, int y, Farmer? who = null)
         {
             try
             {
@@ -31,39 +31,35 @@ namespace BigFridge.Patches
                     {
                         Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13053"));
                         __result = false;
-                        return false;
                     }
-                    if (location is not FarmHouse && location is not IslandFarmHouse)
+                    else if (location is not FarmHouse && location is not IslandFarmHouse)
                     {
                         Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:Object.cs.13053"));
                         __result = false;
-                        return false;
                     }
-                    if (location is FarmHouse { upgradeLevel: < 1 })
+                    else if (location is FarmHouse { upgradeLevel: < 1 })
                     {
                         Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:MiniFridge_NoKitchen"));
                         __result = false;
-                        return false;
                     }
-                    Chest fridge = new("AlanBF.BigFridge", placementTile, 1, 2)
+                    else
                     {
-                        shakeTimer = 50,
-                        SpecialChestType = (Chest.SpecialChestTypes)9
-                    };
-                    fridge.fridge.Value = true;
-                    location.objects.Add(placementTile, fridge);
-                    location.playSound("hammer");
+                        Chest fridge = new("AlanBF.BigFridge", placementTile, 1, 2)
+                        {
+                            shakeTimer = 50,
+                            SpecialChestType = (Chest.SpecialChestTypes)9
+                        };
+                        fridge.fridge.Value = true;
+                        location.objects.Add(placementTile, fridge);
+                        location.playSound("hammer");
 
-                    __result = true;
-                    return false;
+                        __result = true;
+                    }
                 }
-
-                return true;
             }
             catch (Exception ex)
             {
                 Monitor.Log($"Failed in {nameof(placementActionPrefix)}:\n{ex}", LogLevel.Error);
-                return true;
             }
         }
     }
