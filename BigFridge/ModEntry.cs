@@ -1,24 +1,19 @@
-﻿using StardewModdingAPI;
+﻿using BigFridge.Compatibility.GenericModConfigMenu;
+using BigFridge.Patches;
+using HarmonyLib;
+using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
 using StardewValley.GameData.BigCraftables;
 using StardewValley.GameData.Shops;
 using StardewValley.Menus;
 using StardewValley.Objects;
-using static StardewValley.Menus.ItemGrabMenu;
-
-using HarmonyLib;
-using Microsoft.Xna.Framework.Graphics;
-
-using BigFridge.Patches;
-using BigFridge.Compatibility.BetterCrafting;
-using BigFridge.Compatibility.GenericModConfigMenu;
 
 namespace BigFridge
 {
     internal sealed class ModEntry : Mod
     {
-        public static ModConfig Config = new();
+        public static ModConfig Config { get; private set; } = null!;
         public static IMonitor LogMonitor { get; private set; } = null!;
         public static IModHelper ModHelper { get; private set; } = null!;
 
@@ -39,54 +34,54 @@ namespace BigFridge
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
         }
 
-        private void applyPatches(Harmony harmony)
+        private static void applyPatches(Harmony harmony)
         {
-            // Lo asigna como Big Fridge al colocarlo
+            // Fix the change of SpecialType. Will be deleted later.
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Chest), nameof(Chest.ShowMenu)),
+                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.ShowMenuPrefix))
+            );
+
+            // Allows the game to place the Big Fridge with the correct Id
             harmony.Patch(
                 original: AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.placementAction)),
                 prefix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.placementActionPrefix))
             );
 
-            // Capacidad de refrigeradores originales y los nuevos
-            harmony.Patch(
-                original: AccessTools.Method(typeof(Chest), nameof(Chest.GetActualCapacity)),
-                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.getActualCapacityPostfix))
-            );
-
-            // Color picker
-            harmony.Patch(
-                original: AccessTools.Method(typeof(Chest), nameof(Chest.ShowMenu)),
-                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.ShowMenuPostfix))
-            );
-
-            // Reemplaza un Mini-Fridge por un Big Fridge
+            // Put a Big Fridge on top of a Mini Fridge
             harmony.Patch(
                 original: AccessTools.Method(typeof(Chest), nameof(Chest.performObjectDropInAction)),
-                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.performObjectDropInActionPostfix))
+                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.performObjectDropInActionPrefix))
             );
 
-            /*********
-             * Colors
-             *********/
-            // Fridge en el mundo
+            // Change fridge reported capacity
             harmony.Patch(
-                original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float) }),
-                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawPrefix))
+                original: AccessTools.Method(typeof(Chest), nameof(Chest.GetActualCapacity)),
+                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.getActualCapacityPrefix))
             );
-            // Fridge en el color picker
+
+            // Allow to show the color picker
             harmony.Patch(
-                original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), new Type[] { typeof(SpriteBatch), typeof(int), typeof(int), typeof(float), typeof(bool) }),
-                postfix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawLocalPostfix))
+                original: AccessTools.Method(typeof(ItemGrabMenu), nameof(ItemGrabMenu.CanHaveColorPicker)),
+                prefix: new HarmonyMethod(typeof(ItemGrabMenuPatches), nameof(ItemGrabMenuPatches.CanHaveColorPickerPrefix))
             );
-            // ItemGrabMenu
+
+            // Fix color picker Fridge drawing
             harmony.Patch(
-                original: AccessTools.Constructor(typeof(ItemGrabMenu), new Type[] { typeof(IList<Item>), typeof(bool), typeof(bool), typeof(InventoryMenu.highlightThisItem), typeof(behaviorOnItemSelect), typeof(string), typeof(behaviorOnItemSelect), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(Item), typeof(int), typeof(object), typeof(ItemExitBehavior), typeof(bool) }),
-                postfix: new HarmonyMethod(typeof(ItemGrabMenuPatches), nameof(ItemGrabMenuPatches.ItemGrabMenuPostfix))
+                original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), [typeof(SpriteBatch), typeof(int), typeof(int), typeof(float), typeof(bool)]),
+                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawLocalPrefix))
             );
-            // ItemGrabMenu source
+
+            // Fix color picker changing position with a Big Fridge
             harmony.Patch(
                 original: AccessTools.Method(typeof(ItemGrabMenu), nameof(ItemGrabMenu.setSourceItem)),
                 postfix: new HarmonyMethod(typeof(ItemGrabMenuPatches), nameof(ItemGrabMenuPatches.setSourceItemPostfix))
+            );
+
+            // Actually apply the color
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Chest), nameof(Chest.draw), [typeof(SpriteBatch), typeof(int), typeof(int), typeof(float)]),
+                prefix: new HarmonyMethod(typeof(ChestPatches), nameof(ChestPatches.drawPrefix))
             );
         }
 
@@ -125,13 +120,17 @@ namespace BigFridge
             }
 
             // La imagen de los items
-            if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/BigFridge"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/BigFridge"))
+            {
                 e.LoadFromModFile<Texture2D>("assets/BigFridge.png", AssetLoadPriority.Exclusive);
-            if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
+            }
+            else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
+            {
                 e.LoadFromModFile<Texture2D>("assets/SmallFridge.png", AssetLoadPriority.Exclusive);
+            }
 
             // Lo agrega a la tienda de Robin
-            if (e.Name.IsEquivalentTo("Data/Shops"))
+            else if (e.Name.IsEquivalentTo("Data/Shops"))
             {
                 e.Edit(rawInfo =>
                 {
@@ -140,8 +139,8 @@ namespace BigFridge
                     const string House2 = "PLAYER_FARMHOUSE_UPGRADE Current 2";
                     string HearthsRobin = $"PLAYER_FRIENDSHIP_POINTS Current Robin {Config.HearthsWithRobin * 250}";
 
-                    string condition = Config.ItemFridgeWithHearths?
-                        $"ANY \"{House2}\" \"{HearthsRobin}\"":
+                    string condition = Config.ItemFridgeWithHearths ?
+                        $"ANY \"{House2}\" \"{HearthsRobin}\"" :
                         House2;
 
                     ShopItemData toAdd = new()
@@ -195,13 +194,6 @@ namespace BigFridge
                     name: () => Helper.Translation.Get("Config_Price_Name"),
                     tooltip: () => Helper.Translation.Get("Config_Price_Tooltip")
                     );
-            }
-
-            IBetterCraftingAPI? apiBetterCrafting = Helper.ModRegistry.GetApi<IBetterCraftingAPI>("leclair.bettercrafting");
-            if (apiBetterCrafting != null)
-            {
-                apiBetterCrafting.UnregisterInventoryProvider(typeof(Chest));
-                apiBetterCrafting.RegisterInventoryProvider(typeof(Chest), new ChestProvider());
             }
         }
     }

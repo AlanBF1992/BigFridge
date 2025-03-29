@@ -1,7 +1,7 @@
 {
     "Name": "Big Fridge",
     "Author": "AlanBF",
-    "Version": "1.3.2",
+    "Version": "1.4.0",
     "Description": "Add a bigger type of fridge and give fridges a color picker",
     "UniqueID": "AlanBF.BigFridge",
     "EntryDll": "BigFridge.dll",
@@ -15,7 +15,7 @@
         },
         {
             "UniqueID": "leclair.bettercrafting",
-            "MinimumVersion": "2.13.0",
+            "MinimumVersion": "2.17.1",
             "IsRequired": false
         }
     ]
