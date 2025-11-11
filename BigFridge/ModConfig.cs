@@ -6,7 +6,7 @@
         public bool ItemFridgeWithHearths { get; set; } = true;
         public int HearthsWithRobin { get; set; } = 5;
         public int Price { get; set; } = 10000;
-        public bool ReskinMiniFridge = true;
+        public bool ReskinMiniFridge { get; set; } = true;
         public string FridgeFolderAssets { get; set; } = "Vanilla";
     }
 }

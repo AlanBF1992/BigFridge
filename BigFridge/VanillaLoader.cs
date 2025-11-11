@@ -13,6 +13,10 @@ namespace BigFridge
 {
     internal static class VanillaLoader
     {
+        internal static bool MiniVanillaInfoCaptured { get; set; } = false;
+        internal static string MiniVanillaTexture { get; set; }
+        internal static int MiniVanillaSpriteIndex { get; set; }
+
         internal static void Loader(IModHelper helper, Harmony harmony)
         {
             VanillaPatches(harmony);
@@ -125,7 +129,11 @@ namespace BigFridge
                 apiGMCM.AddBoolOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.ReskinMiniFridge,
-                    setValue: newValue => ModEntry.Config.ReskinMiniFridge = newValue,
+                    setValue: newValue =>
+                    {
+                        ModEntry.Config.ReskinMiniFridge = newValue;
+                        ModEntry.ModHelper.GameContent.InvalidateCache("Data/BigCraftables");
+                    },
                     name: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Name"),
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Tooltip"),
                     fieldId: "AlanBF.BigFridge.ReskinMiniFridge");
@@ -160,11 +168,23 @@ namespace BigFridge
 
                     data.TryAdd("AlanBF.BigFridge", toAdd);
 
-                    // Edit Small Fridge
-                    if (!ModEntry.Config.ReskinMiniFridge) return;
+                    // Mini Fridge Changes
+                    if (!MiniVanillaInfoCaptured)
+                    {
+                        MiniVanillaTexture = data["216"].Texture;
+                        MiniVanillaSpriteIndex = data["216"].SpriteIndex;
+                        MiniVanillaInfoCaptured = true;
+                    }
 
-                    data["216"].Texture = "TileSheets/SmallFridge";
-                    data["216"].SpriteIndex = 0;
+                    if (!ModEntry.Config.ReskinMiniFridge)
+                    {
+                        data["216"].Texture = MiniVanillaTexture;
+                        data["216"].SpriteIndex = MiniVanillaSpriteIndex;
+                    } else
+                    {
+                        data["216"].Texture = "TileSheets/SmallFridge";
+                        data["216"].SpriteIndex = 0;
+                    }
                 });
             }
 

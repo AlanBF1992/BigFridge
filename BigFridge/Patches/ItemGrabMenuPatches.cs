@@ -8,7 +8,8 @@ namespace BigFridge.Patches
     {
         internal static bool CanHaveColorPickerPrefix(ItemGrabMenu __instance, ref bool __result)
         {
-            if (__instance.source == 1 && __instance.sourceItem is Chest chest && chest.QualifiedItemId is "(BC)216" or "(BC)AlanBF.BigFridge")
+            if (__instance.source == 1 && __instance.sourceItem is Chest chest &&
+                (chest.QualifiedItemId == "(BC)AlanBF.BigFridge" || chest.QualifiedItemId == "(BC)216" && ModEntry.Config.ReskinMiniFridge))
             {
                 __result = true;
                 return false;

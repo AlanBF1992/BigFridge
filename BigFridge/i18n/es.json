@@ -9,6 +9,8 @@
   "Config_HearthsWithRobin_Tooltip": "Solo útil si \"Neveras con amistad\" está Activa.",
   "Config_Price_Name": "Precio",
   "Config_Price_Tooltip": "Precio de una Nevera en la tienda de Robin.",
+  "Config_ReskinMiniFridge_Name": "Cambiar Mini-Fridge",
+  "Config_ReskinMiniFridge_Tooltip": "Cambiar la textura de la Mini-Nevera para hacerla mini.",
   "Assets_To_Use_Name": "Imagen a usar",
   "Assets_To_Use_Tooltip": "Cambia la imagen de las Neveras."
 }
