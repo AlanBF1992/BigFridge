@@ -122,6 +122,13 @@ namespace BigFridge
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Assets_To_Use_Tooltip"),
                     allowedValues: ModEntry.AvailableFolders
                     );
+                apiGMCM.AddBoolOption(
+                    mod: ModEntry.ModManifest,
+                    getValue: () => ModEntry.Config.ReskinMiniFridge,
+                    setValue: newValue => ModEntry.Config.ReskinMiniFridge = newValue,
+                    name: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Name"),
+                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Tooltip"),
+                    fieldId: "AlanBF.BigFridge.ReskinMiniFridge");
             }
         }
 
@@ -154,6 +161,8 @@ namespace BigFridge
                     data.TryAdd("AlanBF.BigFridge", toAdd);
 
                     // Edit Small Fridge
+                    if (!ModEntry.Config.ReskinMiniFridge) return;
+
                     data["216"].Texture = "TileSheets/SmallFridge";
                     data["216"].SpriteIndex = 0;
                 });
@@ -164,7 +173,7 @@ namespace BigFridge
             {
                 e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/BigFridge.png", AssetLoadPriority.Exclusive);
             }
-            else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
+            else if (ModEntry.Config.ReskinMiniFridge && e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
             {
                 e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/SmallFridge.png", AssetLoadPriority.Exclusive);
             }

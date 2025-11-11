@@ -73,7 +73,10 @@ namespace BigFridge.Patches
 
         internal static bool drawPrefix(Chest __instance, SpriteBatch spriteBatch, int x, int y, float alpha)
         {
-            if (!__instance.playerChest.Value || (__instance.QualifiedItemId != "(BC)AlanBF.BigFridge" && __instance.QualifiedItemId != "(BC)216")) return true;
+            if (!__instance.playerChest.Value) return true;
+
+            var skipMiniFridge = !ModEntry.Config.ReskinMiniFridge || __instance.QualifiedItemId != "(BC)216";
+            if (__instance.QualifiedItemId != "(BC)AlanBF.BigFridge" && skipMiniFridge) return true;
 
             try
             {
@@ -130,7 +133,10 @@ namespace BigFridge.Patches
 
         internal static bool drawLocalPrefix(Chest __instance, SpriteBatch spriteBatch, int x, int y, float alpha, bool local)
         {
-            if (!__instance.playerChest.Value || (__instance.QualifiedItemId != "(BC)AlanBF.BigFridge" && __instance.QualifiedItemId != "(BC)216")) return true;
+            if (!__instance.playerChest.Value) return true;
+
+            var skipMiniFridge = !ModEntry.Config.ReskinMiniFridge || __instance.QualifiedItemId != "(BC)216";
+            if (__instance.QualifiedItemId != "(BC)AlanBF.BigFridge" && skipMiniFridge) return true;
 
             try
             {
