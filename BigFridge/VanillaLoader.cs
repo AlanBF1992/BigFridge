@@ -110,6 +110,18 @@ namespace BigFridge
                     name: () => ModEntry.ModHelper.Translation.Get("Config_Price_Name"),
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Config_Price_Tooltip")
                     );
+                apiGMCM.AddTextOption(
+                    mod: ModEntry.ModManifest,
+                    getValue: () => ModEntry.Config.FridgeFolderAssets,
+                    setValue: newValue => {
+                        ModEntry.Config.FridgeFolderAssets = newValue;
+                        ModEntry.ModHelper.GameContent.InvalidateCache("TileSheets/SmallFridge");
+                        ModEntry.ModHelper.GameContent.InvalidateCache("TileSheets/BigFridge");
+                    },
+                    name: () => ModEntry.ModHelper.Translation.Get("Assets_To_Use_Name"),
+                    tooltip: () => ModEntry.ModHelper.Translation.Get("Assets_To_Use_Tooltip"),
+                    allowedValues: ModEntry.AvailableFolders
+                    );
             }
         }
 
@@ -150,11 +162,11 @@ namespace BigFridge
             // La imagen de los items
             else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/BigFridge"))
             {
-                e.LoadFromModFile<Texture2D>("assets/BigFridge.png", AssetLoadPriority.Exclusive);
+                e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/BigFridge.png", AssetLoadPriority.Exclusive);
             }
             else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
             {
-                e.LoadFromModFile<Texture2D>("assets/SmallFridge.png", AssetLoadPriority.Exclusive);
+                e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/SmallFridge.png", AssetLoadPriority.Exclusive);
             }
 
             // Lo agrega a la tienda de Robin
