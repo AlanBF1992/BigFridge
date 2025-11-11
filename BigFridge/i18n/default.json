@@ -8,6 +8,8 @@
     "Config_HearthsWithRobin_Name": "Hearts to early unlock",
     "Config_HearthsWithRobin_Tooltip": "Only useful if \"Big Fridges with Friendhip\" is Enabled.",
     "Config_Price_Name": "Price",
-    "Config_Price_Tooltip": "Price of a Big Fridge in Robin's Shop."
+    "Config_Price_Tooltip": "Price of a Big Fridge in Robin's Shop.",
+    "Config_ReskinMiniFridge_Name": "Reskin Mini-Fridge",
+    "Config_ReskinMiniFridge_Tooltip": "Allow BigFridge to texture the mini-fridge, as well."
 
 }
