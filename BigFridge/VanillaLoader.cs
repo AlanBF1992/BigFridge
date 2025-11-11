@@ -13,10 +13,6 @@ namespace BigFridge
 {
     internal static class VanillaLoader
     {
-        internal static bool MiniVanillaInfoCaptured { get; set; } = false;
-        internal static string MiniVanillaTexture { get; set; }
-        internal static int MiniVanillaSpriteIndex { get; set; }
-
         internal static void Loader(IModHelper helper, Harmony harmony)
         {
             VanillaPatches(harmony);
@@ -133,6 +129,11 @@ namespace BigFridge
                     {
                         ModEntry.Config.ReskinMiniFridge = newValue;
                         ModEntry.ModHelper.GameContent.InvalidateCache("Data/BigCraftables");
+                        if (newValue)
+                        {
+                            ModEntry.ModHelper.GameContent.InvalidateCache("TileSheets/SmallFridge");
+                            ModEntry.ModHelper.GameContent.InvalidateCache("TileSheets/BigFridge");
+                        }
                     },
                     name: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Name"),
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Tooltip"),
@@ -169,17 +170,10 @@ namespace BigFridge
                     data.TryAdd("AlanBF.BigFridge", toAdd);
 
                     // Mini Fridge Changes
-                    if (!MiniVanillaInfoCaptured)
-                    {
-                        MiniVanillaTexture = data["216"].Texture;
-                        MiniVanillaSpriteIndex = data["216"].SpriteIndex;
-                        MiniVanillaInfoCaptured = true;
-                    }
-
                     if (!ModEntry.Config.ReskinMiniFridge)
                     {
-                        data["216"].Texture = MiniVanillaTexture;
-                        data["216"].SpriteIndex = MiniVanillaSpriteIndex;
+                        data["216"].Texture = null;
+                        data["216"].SpriteIndex = 216;
                     } else
                     {
                         data["216"].Texture = "TileSheets/SmallFridge";
@@ -193,7 +187,7 @@ namespace BigFridge
             {
                 e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/BigFridge.png", AssetLoadPriority.Exclusive);
             }
-            else if (ModEntry.Config.ReskinMiniFridge && e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
+            else if (e.NameWithoutLocale.IsEquivalentTo("TileSheets/SmallFridge"))
             {
                 e.LoadFromModFile<Texture2D>($"assets/{ModEntry.Config.FridgeFolderAssets}/SmallFridge.png", AssetLoadPriority.Exclusive);
             }
