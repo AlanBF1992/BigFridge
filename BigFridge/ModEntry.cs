@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BigFridge.Compatibility.VPP;
+using HarmonyLib;
 using StardewModdingAPI;
 
 namespace BigFridge
@@ -23,8 +24,14 @@ namespace BigFridge
             AvailableFolders = [.. new DirectoryInfo(Path.Combine(ModHelper.DirectoryPath, "assets")).GetDirectories().Select(x => x.Name)];
 
             // Patches
-            VanillaLoader.Loader(helper, harmony);
+            VanillaLoader.Loader(ModHelper, harmony);
             LogMonitor.Log("Base Patches Loaded", LogLevel.Info);
+
+            if (ModHelper.ModRegistry.IsLoaded("KediDili.VanillaPlusProfessions"))
+            {
+                VPPLoader.Loader(ModHelper, harmony);
+                LogMonitor.Log("VPP Patches Loaded", LogLevel.Info);
+            }
         }
     }
 }

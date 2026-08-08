@@ -13,6 +13,19 @@ namespace BigFridge
 {
     internal static class VanillaLoader
     {
+        internal static string bigFridgeUnlockCondition
+        {
+            get
+            {
+                const string House2 = "PLAYER_FARMHOUSE_UPGRADE Current 2";
+                string HearthsRobin = $"PLAYER_FRIENDSHIP_POINTS Current Robin {ModEntry.Config.HearthsWithRobin * 250}";
+
+                return ModEntry.Config.ItemFridgeWithHearths ?
+                    $"ANY \"{House2}\" \"{HearthsRobin}\"" :
+                    House2;
+            }
+        }
+
         internal static void Loader(IModHelper helper, Harmony harmony)
         {
             VanillaPatches(harmony);
@@ -199,19 +212,12 @@ namespace BigFridge
                 {
                     IDictionary<string, ShopData> data = rawInfo.AsDictionary<string, ShopData>().Data;
 
-                    const string House2 = "PLAYER_FARMHOUSE_UPGRADE Current 2";
-                    string HearthsRobin = $"PLAYER_FRIENDSHIP_POINTS Current Robin {ModEntry.Config.HearthsWithRobin * 250}";
-
-                    string condition = ModEntry.Config.ItemFridgeWithHearths ?
-                        $"ANY \"{House2}\" \"{HearthsRobin}\"" :
-                        House2;
-
                     ShopItemData toAdd = new()
                     {
                         Id = "AlanBF.BigFridge",
                         ItemId = "AlanBF.BigFridge",
                         Price = ModEntry.Config.Price,
-                        Condition = condition
+                        Condition = bigFridgeUnlockCondition
                     };
                     int index = data["Carpenter"].Items.FindIndex(a => a.Id == "(BC)216");
                     data["Carpenter"].Items.Insert(index + 1, toAdd);
