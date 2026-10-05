@@ -57,17 +57,17 @@ namespace BigFridge.Compatibility.VPP
                 {
                     var data = rawInfo.AsDictionary<string, string>().Data;
 
-                    data["Mini-Fridge"] = "(BC)130 1 84 1 334 1/Home/(BC)216 1/true/none/";
-                    data["Big Fridge 1"] = "(BC)BigChest 1 84 1 334 2 336 1/Home/(BC)AlanBF.BigFridge 1/true/none/";
-                    data["Big Fridge 2"] = "(BC)216 1 334 1 336 1/Home/(BC)AlanBF.BigFridge 1/true/none/";
+                    data[$"{ModEntry.ModManifest.UniqueID}.Mini-Fridge"] = "(BC)130 1 84 1 334 1/Home/(BC)216 1/true/none/";
+                    data[$"{ModEntry.ModManifest.UniqueID}.BigFridge1"] = "(BC)BigChest 1 84 1 334 2 336 1/Home/(BC)AlanBF.BigFridge 1/true/none/";
+                    data[$"{ModEntry.ModManifest.UniqueID}.BigFridge2"] = "(BC)216 1 334 1 336 1/Home/(BC)AlanBF.BigFridge 1/true/none/";
                 });
             }
         }
 
         private static void CheckUnlockedRecipes(object? sender, SaveLoadedEventArgs e)
         {
-            TalentSelectionMenuPatches.UnlockedMiniRecipe = Game1.player.craftingRecipes.ContainsKey("Mini-Fridge");
-            TalentSelectionMenuPatches.UnlockedBigRecipes = Game1.player.craftingRecipes.ContainsKey("Big Fridge 1");
+            TalentSelectionMenuPatches.UnlockedMiniRecipe = Game1.player.craftingRecipes.ContainsKey($"{ModEntry.ModManifest.UniqueID}.Mini-Fridge");
+            TalentSelectionMenuPatches.UnlockedBigRecipes = Game1.player.craftingRecipes.ContainsKey($"{ModEntry.ModManifest.UniqueID}.BigFridge1");
 
             if (!TalentSelectionMenuPatches.UnlockedMiniRecipe || !TalentSelectionMenuPatches.UnlockedBigRecipes)
             {
@@ -87,21 +87,17 @@ namespace BigFridge.Compatibility.VPP
             if (!TalentSelectionMenuPatches.UnlockedMiniRecipe
                 && Game1.player.HouseUpgradeLevel >= 1)
             {
-                Game1.player.craftingRecipes.TryAdd("Mini-Fridge", 0);
+                Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.Mini-Fridge", 0);
                 TalentSelectionMenuPatches.UnlockedMiniRecipe = true;
-
-                //ModEntry.ModHelper.GameContent.InvalidateCache("Data\\CraftingRecipes");
             }
 
             if (!TalentSelectionMenuPatches.UnlockedBigRecipes
                 && GameStateQuery.CheckConditions(VanillaLoader.bigFridgeUnlockCondition))
             {
-                Game1.player.craftingRecipes.TryAdd("Big Fridge 1", 0);
-                Game1.player.craftingRecipes.TryAdd("Big Fridge 2", 0);
+                Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.BigFridge1", 0);
+                Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.BigFridge2", 0);
                 TalentSelectionMenuPatches.UnlockedBigRecipes = true;
                 ModEntry.ModHelper.Events.GameLoop.DayStarted -= UnlockRecipesDaily;
-
-                //ModEntry.ModHelper.GameContent.InvalidateCache("Data\\CraftingRecipes");
             }
         }
     }

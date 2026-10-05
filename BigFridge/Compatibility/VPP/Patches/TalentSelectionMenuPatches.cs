@@ -22,17 +22,15 @@ namespace BigFridge.Compatibility.VPP.Patches
 
                 if (Game1.player.HouseUpgradeLevel >= 1)
                 {
-                    Game1.player.craftingRecipes.TryAdd("Mini-Fridge", 0);
+                    Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.Mini-Fridge", 0);
                     UnlockedMiniRecipe = true;
 
                     if (GameStateQuery.CheckConditions(VanillaLoader.bigFridgeUnlockCondition))
                     {
-                        Game1.player.craftingRecipes.TryAdd("Big Fridge 1", 0);
-                        Game1.player.craftingRecipes.TryAdd("Big Fridge 2", 0);
+                        Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.BigFridge1", 0);
+                        Game1.player.craftingRecipes.TryAdd($"{ModEntry.ModManifest.UniqueID}.BigFridge2", 0);
                         UnlockedBigRecipes = true;
                     }
-
-                    //ModEntry.ModHelper.GameContent.InvalidateCache("Data\\CraftingRecipes");
                 }
             }
         }
