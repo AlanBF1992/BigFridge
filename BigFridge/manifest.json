@@ -1,27 +1,32 @@
 {
-    "Name": "Big Fridge",
-    "Author": "AlanBF",
-    "Version": "1.7.0",
-    "Description": "Add a bigger type of fridge and give fridges a color picker",
-    "UniqueID": "AlanBF.BigFridge",
-    "EntryDll": "BigFridge.dll",
-    "MinimumApiVersion": "4.0.8",
-    "UpdateKeys": [ "Nexus:22457" ],
-    "Dependencies": [
-        {
-            "UniqueID": "spacechase0.GenericModConfigMenu",
-            "MinimumVersion": "1.12.0",
-            "IsRequired": false
-        },
-        {
-          "UniqueID": "leclair.bettercrafting",
-          "MinimumVersion": "2.17.1",
-          "IsRequired": false
-        },
-        {
-          "UniqueID": "gaussfire.ConvenientInventory",
-          "MinimumVersion": "1.6.1",
-          "IsRequired": false
-        }
-    ]
+  "Name": "Big Fridge",
+  "Author": "AlanBF",
+  "Version": "1.7.0",
+  "Description": "Add a bigger type of fridge and give fridges a color picker",
+  "UniqueID": "AlanBF.BigFridge",
+  "EntryDll": "BigFridge.dll",
+  "MinimumApiVersion": "4.0.8",
+  "UpdateKeys": [ "Nexus:22457" ],
+  "Dependencies": [
+    {
+      "UniqueID": "spacechase0.GenericModConfigMenu",
+      "MinimumVersion": "1.12.0",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "leclair.bettercrafting",
+      "MinimumVersion": "2.17.1",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "gaussfire.ConvenientInventory",
+      "MinimumVersion": "1.6.1",
+      "IsRequired": false
+    },
+    {
+      "UniqueID": "Spiderbuttons.UnlimitedChestColours",
+      "MinimumVersion": "1.0.2",
+      "IsRequired": false
+    }
+  ]
 }

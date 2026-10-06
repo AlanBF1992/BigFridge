@@ -1,4 +1,5 @@
 ﻿using BigFridge.Compatibility.ConvenientInventory;
+using BigFridge.Compatibility.UnlimitedChestColours;
 using BigFridge.Compatibility.VPP;
 using HarmonyLib;
 using StardewModdingAPI;
@@ -38,6 +39,12 @@ namespace BigFridge
             {
                 ConvenientInventoryLoader.Loader(ModHelper, harmony);
                 LogMonitor.Log("ConvenientInventory Patches Loaded", LogLevel.Info);
+            }
+
+            if (ModHelper.ModRegistry.IsLoaded("Spiderbuttons.UnlimitedChestColours"))
+            {
+                UCCLoader.Loader(ModHelper, harmony);
+                LogMonitor.Log("UnlimitedChestColours Patches Loaded", LogLevel.Info);
             }
         }
     }
