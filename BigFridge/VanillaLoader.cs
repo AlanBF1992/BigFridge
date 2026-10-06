@@ -90,21 +90,29 @@ namespace BigFridge
             IGMCMApi? apiGMCM = ModEntry.ModHelper.ModRegistry.GetApi<IGMCMApi>("spacechase0.GenericModConfigMenu");
             if (apiGMCM != null)
             {
-                apiGMCM.Register(ModEntry.ModManifest, () => ModEntry.Config = new(), () => ModEntry.ModHelper.WriteConfig(ModEntry.Config), false);
+                apiGMCM.Register(
+                    mod: ModEntry.ModManifest,
+                    reset: () => ModEntry.Config = new(),
+                    save: () => ModEntry.ModHelper.WriteConfig(ModEntry.Config),
+                    titleScreenOnly: false
+                );
+
                 apiGMCM.AddBoolOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.HouseFridgeProgressive,
                     setValue: newValue => ModEntry.Config.HouseFridgeProgressive = newValue,
                     name: () => ModEntry.ModHelper.Translation.Get("Config_HouseFridgeProgressive_Name"),
-                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_HouseFridgeProgressive_Tooltip"),
-                    fieldId: "AlanBF.BigFridge.HouseFridgeProgressive");
+                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_HouseFridgeProgressive_Tooltip")
+                );
+
                 apiGMCM.AddBoolOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.ItemFridgeWithHearths,
                     setValue: newValue => ModEntry.Config.ItemFridgeWithHearths = newValue,
                     name: () => ModEntry.ModHelper.Translation.Get("Config_ItemFridgeWithHearths_Name"),
-                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ItemFridgeWithHearths_Tooltip"),
-                    fieldId: "AlanBF.BigFridge.ItemFridgeWithHearths");
+                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ItemFridgeWithHearths_Tooltip")
+                );
+
                 apiGMCM.AddNumberOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.HearthsWithRobin,
@@ -114,15 +122,27 @@ namespace BigFridge
                     min: 0,
                     max: 10,
                     interval: 1,
-                    formatValue: value => value.ToString(),
-                    fieldId: "AlanBF.BigFridge.HearthsWithRobin");
+                    formatValue: value => value.ToString()
+                );
+
                 apiGMCM.AddNumberOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.Price,
                     setValue: newValue => ModEntry.Config.Price = newValue,
                     name: () => ModEntry.ModHelper.Translation.Get("Config_Price_Name"),
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Config_Price_Tooltip")
-                    );
+                );
+
+                apiGMCM.AddParagraph(
+                    mod: ModEntry.ModManifest,
+                    text: () => ModEntry.ModHelper.Translation.Get("Config_TitleOnlyAssetsChanges")
+                );
+
+                apiGMCM.SetTitleScreenOnlyForNextOptions(
+                    mod: ModEntry.ModManifest,
+                    titleScreenOnly: true
+                );
+
                 apiGMCM.AddTextOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.FridgeFolderAssets,
@@ -134,7 +154,8 @@ namespace BigFridge
                     name: () => ModEntry.ModHelper.Translation.Get("Assets_To_Use_Name"),
                     tooltip: () => ModEntry.ModHelper.Translation.Get("Assets_To_Use_Tooltip"),
                     allowedValues: ModEntry.AvailableFolders
-                    );
+                );
+
                 apiGMCM.AddBoolOption(
                     mod: ModEntry.ModManifest,
                     getValue: () => ModEntry.Config.ReskinMiniFridge,
@@ -149,8 +170,8 @@ namespace BigFridge
                         }
                     },
                     name: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Name"),
-                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Tooltip"),
-                    fieldId: "AlanBF.BigFridge.ReskinMiniFridge");
+                    tooltip: () => ModEntry.ModHelper.Translation.Get("Config_ReskinMiniFridge_Tooltip")
+                );
             }
         }
 

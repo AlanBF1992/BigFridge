@@ -9,6 +9,7 @@
   "Config_HearthsWithRobin_Tooltip": "Only useful if \"Big Fridges with Friendhip\" is Enabled.",
   "Config_Price_Name": "Price",
   "Config_Price_Tooltip": "Price of a Big Fridge in Robin's Shop.",
+  "Config_TitleOnlyAssetsChanges": "The Mini-Fridge appareance options can only be changed at the title screen.",
   "Config_ReskinMiniFridge_Name": "Reskin Mini-Fridge",
   "Config_ReskinMiniFridge_Tooltip": "Allow BigFridge to texture the mini-fridge, as well.",
   "Assets_To_Use_Name": "Assets to use",

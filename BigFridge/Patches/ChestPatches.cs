@@ -84,22 +84,16 @@ namespace BigFridge.Patches
                 float num2 = y;
                 float num3 = Math.Max(0f, ((num2 + 1f) * 64f - 24f) / 10000f) + num * 1E-05f;
 
-                int baseLidFrame = __instance.ParentSheetIndex;
-                int currentLidFrame = (int)__instance.GetInstanceField("currentLidFrame")!;
-
-                if (__instance.QualifiedItemId == "(BC)216")
-                {
-                    baseLidFrame = 0;
-                    currentLidFrame -= __instance.startingLidFrame.Value - 1;
-                }
+                const int baseLidFrame = 0;
+                const int currentLidFrame = 1;
 
                 ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(__instance.QualifiedItemId);
                 Texture2D texture = dataOrErrorItem.GetTexture();
-
+                
                 if (__instance.playerChoiceColor.Value.Equals(Color.Black))
                 {
-                    int baseFridge = baseLidFrame;
-                    int fridgeDoor = currentLidFrame;
+                    const int baseFridge = baseLidFrame;
+                    const int fridgeDoor = currentLidFrame;
 
                     Rectangle sourceBaseFridge = dataOrErrorItem.GetSourceRect(0, baseFridge);
                     Rectangle sourceOpenDoor = dataOrErrorItem.GetSourceRect(0, fridgeDoor);
@@ -110,9 +104,9 @@ namespace BigFridge.Patches
                     return false;
                 }
 
-                int colorFridge = baseLidFrame + 3;
-                int colorFridgeDoor = currentLidFrame + 3;
-                int fridgePostIts = currentLidFrame + 6;
+                const int colorFridge = baseLidFrame + 3;
+                const int colorFridgeDoor = currentLidFrame + 3;
+                const int fridgePostIts = currentLidFrame + 6;
 
                 Rectangle sourceColorFridge = dataOrErrorItem.GetSourceRect(0, colorFridge);
                 Rectangle sourcePostIt = dataOrErrorItem.GetSourceRect(0, fridgePostIts);

@@ -1,4 +1,5 @@
-﻿using BigFridge.Compatibility.VPP;
+﻿using BigFridge.Compatibility.ConvenientInventory;
+using BigFridge.Compatibility.VPP;
 using HarmonyLib;
 using StardewModdingAPI;
 
@@ -31,6 +32,12 @@ namespace BigFridge
             {
                 VPPLoader.Loader(ModHelper, harmony);
                 LogMonitor.Log("VPP Patches Loaded", LogLevel.Info);
+            }
+
+            if (ModHelper.ModRegistry.IsLoaded("gaussfire.ConvenientInventory"))
+            {
+                ConvenientInventoryLoader.Loader(ModHelper, harmony);
+                LogMonitor.Log("ConvenientInventory Patches Loaded", LogLevel.Info);
             }
         }
     }
