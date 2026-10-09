@@ -21,7 +21,7 @@ namespace BigFridge.Patches
         {
             if (__instance.sourceItem is not Chest fridge || fridge.QualifiedItemId != "(BC)AlanBF.BigFridge") return;
 
-            __instance.chestColorPicker.yPositionOnScreen -= 42;
+            __instance.chestColorPicker?.yPositionOnScreen -= 42;
         }
     }
 }
